@@ -58,7 +58,7 @@ stateDiagram-v2
 stateDiagram-v2
   [*] --> OPEN: create (สูงสุด 1 OPEN ต่อ Finding, ตัวที่สอง → 409)
   OPEN --> DONE
-  OPEN --> CANCELLED: cancel_reason
+  OPEN --> CANCELLED: cancel_reason required (422 if missing)
   DONE --> [*]
   CANCELLED --> [*]: เก็บไว้ ไม่ลบ
 ```
