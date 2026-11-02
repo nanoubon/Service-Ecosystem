@@ -18,7 +18,7 @@ export default function Overview() {
             <KpiCard label="Plant load" value={o.plant_load_rt.toLocaleString()} unit="RT" />
             <KpiCard label="Energy today" value={o.energy_today_kwh.toLocaleString()} unit="kWh" />
             <KpiCard label="Findings รอ Verify" value={o.pending_findings} hint="ต้องให้วิศวกรยืนยัน" tone={o.pending_findings ? 'warn' : 'ok'} />
-            <KpiCard label="Savings (MTD)" value={`฿${o.savings_thb_mtd.toLocaleString()}`} hint="mv_status: PENDING" tone="warn" />
+            <KpiCard label="Verified savings (MTD)" value={`฿${o.verified_savings_amount_thb_mtd.toLocaleString()}`} unit="THB" hint="เฉพาะ mv_status VERIFIED" tone="ok" />
           </div>
           <div className="mb-4"><Card title="kW/RT · 7 วัน" subtitle="Actual vs Baseline">
             <LineChart labels={o.trend.labels} series={[{ name: 'Actual', data: o.trend.actual, color: 'color-primary' }, { name: 'Baseline', data: o.trend.baseline, color: 'color-text-subtle', dashed: true }]} />

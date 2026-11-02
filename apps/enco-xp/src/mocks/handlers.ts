@@ -1,19 +1,30 @@
 // The ONLY place in the app that reads fixtures from /mocks. Pages use src/api.
 import { http, HttpResponse, delay } from 'msw';
 import { assets, findings as seed, savings, series, telemetry } from '@enco/mocks';
-import type { CreateWorkOrderRequest, FindingView } from '@enco/contract';
+import { canTransition, type CreateWorkOrderRequest, type FindingView } from '@enco/contract';
 
 const findings: FindingView[] = structuredClone(seed);
 let woSeq = 1200;
 const byId = (id: string) => findings.find((f) => f.finding_id === id);
 
+/** Test/demo scenario override: localStorage 'enco-mock-scenario' = loading | empty | error */
+const scenario = () => (typeof localStorage !== 'undefined' ? localStorage.getItem('enco-mock-scenario') : null);
+const conflict = (msg: string) => HttpResponse.json({ error: msg }, { status: 409 });
+
 export const handlers = [
+  http.get('/api/*', async ({ request }) => {
+    const sc = scenario();
+    if (sc === 'loading') { await delay('infinite'); }
+    if (sc === 'error') return HttpResponse.json({ error: 'simulated' }, { status: 500 });
+    if (sc === 'empty' && !/\/api\/(overview|energy)$|\/api\/(assets|findings)\/./.test(new URL(request.url).pathname)) return HttpResponse.json([]);
+    return undefined;
+  }),
   http.get('/api/overview', async () => {
     await delay(200);
     return HttpResponse.json({
       kw_per_rt: 0.68, kw_per_rt_baseline: 0.72, plant_load_rt: 1380, energy_today_kwh: 18420,
       pending_findings: findings.filter((f) => f.status === 'PENDING').length,
-      savings_thb_mtd: savings.reduce((s, x) => s + x.savings_thb, 0),
+      verified_savings_amount_thb_mtd: savings.filter((x) => x.mv_status === 'VERIFIED').reduce((s, x) => s + x.savings_amount_thb, 0),
       trend: { labels: Array.from({ length: 84 }, (_, i) => `${i}`), actual: series(84, 0.68, 0.05, 7), baseline: series(84, 0.72, 0.02, 11) },
     });
   }),
@@ -36,7 +47,8 @@ export const handlers = [
     const f = byId(String(params.id)); return f ? HttpResponse.json(f) : new HttpResponse(null, { status: 404 });
   }),
   http.post('/api/findings/:id/work-order', async ({ params, request }) => {
-    const f = byId(String(params.id)); if (!f || f.status !== 'PENDING') return new HttpResponse(null, { status: 409 });
+    const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
+    if (!canTransition(f.status, 'VERIFIED')) return conflict(`${f.status} -> VERIFIED not allowed`);
     const body = (await request.json()) as CreateWorkOrderRequest; void body;
     Object.assign(f, { status: 'VERIFIED', verified_by: 'Demo Engineer', work_order_ref: `WO-DEMO-${++woSeq}`, wo_state: 'IN_PROGRESS', after: +(f.target + (f.before - f.target) * 0.15).toFixed(1) });
     return HttpResponse.json(f);
@@ -44,6 +56,7 @@ export const handlers = [
   http.post('/api/findings/:id/reject', async ({ params, request }) => {
     const f = byId(String(params.id)); const { reason } = (await request.json()) as { reason: string };
     if (!f || !reason?.trim()) return HttpResponse.json({ error: 'rejection_reason required' }, { status: 400 });
+    if (!canTransition(f.status, 'REJECTED')) return conflict(`${f.status} -> REJECTED not allowed`);
     Object.assign(f, { status: 'REJECTED', verified_by: 'Demo Engineer', rejection_reason: reason });
     return HttpResponse.json(f);
   }),
@@ -53,6 +66,7 @@ export const handlers = [
   }),
   http.post('/api/findings/:id/close', ({ params }) => {
     const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
+    if (!canTransition(f.status, 'CLOSED')) return conflict(`${f.status} -> CLOSED not allowed (only from VERIFIED)`);
     Object.assign(f, { status: 'CLOSED', wo_state: 'CLOSED' }); return HttpResponse.json(f);
   }),
   http.post('/api/findings/:id/reopen', ({ params }) => {

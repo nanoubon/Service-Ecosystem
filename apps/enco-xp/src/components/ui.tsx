@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 type Tone = 'crit' | 'warn' | 'ok' | 'info';
 const TONE: Record<string, Tone> = {
@@ -38,7 +38,7 @@ export function KpiCard({ label, value, unit, hint, tone }: { label: string; val
 export function Card({ title, subtitle, children, right }: { title?: string; subtitle?: string; children: ReactNode; right?: ReactNode }) {
   return (
     <section className="card">
-      {title && <div className="mb-3 flex items-center justify-between"><div><h3 className="text-md font-semibold">{title}</h3>{subtitle && <p className="text-sm text-muted">{subtitle}</p>}</div>{right}</div>}
+      {title && <div className="mb-3 flex items-center justify-between"><div><h2 className="text-md font-semibold">{title}</h2>{subtitle && <p className="text-sm text-muted">{subtitle}</p>}</div>{right}</div>}
       {children}
     </section>
   );
@@ -64,10 +64,16 @@ export function DataTable<T>({ rows, columns, rowKey, onRowClick, empty = 'ไ�
 }
 
 export function Modal({ title, subtitle, children, onClose }: { title: string; subtitle?: string; children: ReactNode; onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    ref.current?.querySelector<HTMLElement>('select, input, textarea, button')?.focus();
+    const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k);
+  }, [onClose]);
   return (
     <div className="fixed inset-0 z-40 grid place-items-center" style={{ background: "color-mix(in srgb, var(--color-bg) 80%, transparent)" }} onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-lg rounded-xl border border-border bg-panel p-6" onClick={(e) => e.stopPropagation()}>
-        <h3 className="text-lg font-semibold">{title}</h3>
+      <div ref={ref} role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-lg rounded-xl border border-border bg-panel p-6" onClick={(e) => e.stopPropagation()}>
+        <h2 className="text-lg font-semibold">{title}</h2>
         {subtitle && <p className="mb-4 text-muted">{subtitle}</p>}
         {children}
       </div>
@@ -75,17 +81,28 @@ export function Modal({ title, subtitle, children, onClose }: { title: string; s
   );
 }
 
-export const LoadingState = () => <div className="card animate-pulse text-muted">กำลังโหลด… / Loading…</div>;
-export const EmptyState = ({ message = 'ไม่มีข้อมูล' }: { message?: string }) => <div className="card text-center text-muted">{message}</div>;
-export const ErrorState = ({ error }: { error: unknown }) => (
-  <div className="card border-crit text-pill-crit-fg">โหลดข้อมูลไม่สำเร็จ: {error instanceof Error ? error.message : 'unknown error'}</div>
+export const LoadingState = () => (
+  <div className="card space-y-3" role="status" aria-busy="true" aria-label="กำลังโหลด" data-testid="state-loading">
+    {[0, 1, 2].map((i) => <div key={i} className="h-4 animate-pulse rounded-sm bg-panel-2" style={{ width: `${90 - i * 20}%` }} />)}
+  </div>
+);
+export const EmptyState = ({ message = 'ไม่มีข้อมูล', action }: { message?: string; action?: ReactNode }) => (
+  <div className="card text-center text-muted" data-testid="state-empty"><p>{message}</p>{action && <div className="mt-3">{action}</div>}</div>
+);
+export const ErrorState = ({ error, onRetry }: { error: unknown; onRetry?: () => void }) => (
+  <div role="alert" data-testid="state-error" className="flex items-center justify-between gap-3 rounded-md border border-crit bg-pill-crit-bg px-4 py-3 text-pill-crit-fg">
+    <span>โหลดข้อมูลไม่สำเร็จ: {error instanceof Error ? error.message : 'unknown error'}</span>
+    {onRetry && <button className="btn" onClick={onRetry}>ลองใหม่</button>}
+  </div>
 );
 
 /** Renders loading/error/empty states around a TanStack Query result */
-export function QueryState<T>({ q, children }: { q: { isLoading: boolean; error: unknown; data: T | undefined }; children: (d: T) => ReactNode }) {
+export function QueryState<T>({ q, children }: { q: { isLoading: boolean; error: unknown; data: T | undefined; refetch?: () => unknown }; children: (d: T) => ReactNode }) {
+  const retry = q.refetch ? () => void q.refetch!() : undefined;
   if (q.isLoading) return <LoadingState />;
-  if (q.error) return <ErrorState error={q.error} />;
-  if (q.data === undefined) return <EmptyState />;
+  if (q.error) return <ErrorState error={q.error} onRetry={retry} />;
+  if (q.data === undefined || (Array.isArray(q.data) && q.data.length === 0))
+    return <EmptyState message="ยังไม่มีข้อมูล" action={retry && <button className="btn" onClick={retry}>รีเฟรช</button>} />;
   return <>{children(q.data)}</>;
 }
 

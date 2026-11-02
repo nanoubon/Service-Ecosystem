@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Asset, CreateWorkOrderRequest, FindingView, QualityFlag, Savings, Telemetry } from '@enco/contract';
 import { post, request } from './client';
 
-export interface Overview { kw_per_rt: number; kw_per_rt_baseline: number; plant_load_rt: number; energy_today_kwh: number; pending_findings: number; savings_thb_mtd: number; trend: { labels: string[]; actual: number[]; baseline: number[] } }
+export interface Overview { kw_per_rt: number; kw_per_rt_baseline: number; plant_load_rt: number; energy_today_kwh: number; pending_findings: number; verified_savings_amount_thb_mtd: number; trend: { labels: string[]; actual: number[]; baseline: number[] } }
 export interface Energy { hourly_load_rt: number[]; kw_per_rt_by_chiller: { asset_id: string; name: string; kw_per_rt: number }[] }
 export interface DqRow { asset_id: string; tag: string; unit: string; quality_flag: QualityFlag; completeness: number; last_seen: string }
 

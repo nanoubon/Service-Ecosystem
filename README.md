@@ -19,6 +19,7 @@ npm run dev        # http://localhost:5173 (MSW mocks enabled)
 | `npm run preview` | Serve the build on :4173 |
 | `npm run lint` | ESLint (incl. mock-import rule) |
 | `npm run typecheck` | `tsc` for contract, mocks, app |
+| `npm run test:e2e` | Playwright E2E + axe (WCAG 2.1 AA serious/critical) against `vite preview` with MSW |
 
 Set `VITE_USE_MOCKS=false` to disable MSW once a real API exists.
 
@@ -40,6 +41,12 @@ Overview `/` · Asset Health `/assets` · Asset Detail `/assets/:id` · Energy `
 
 ## Mock rule
 Pages and components **must not import mocks**. They call hooks from `src/api`, which hit `/api/*`; MSW intercepts those in the browser. ESLint fails the build if `src/pages` or `src/components` import `@enco/mocks` or any `mocks` path.
+
+## Mock scenarios (testing states)
+Set `localStorage['enco-mock-scenario']` to `loading`, `empty` or `error` to force skeleton / empty (with รีเฟรช) / red error bar (with ลองใหม่) on every page. Remove the key to return to normal data. Mock state is in-memory and resets on full page reload.
+
+## Contract
+`@enco/contract` is **v0.2.0** — see `packages/contract/CHANGELOG.md`. Finding `CLOSED` only from `VERIFIED`; M&V figures shown only when `mv_status = VERIFIED`.
 
 ## Styling rule
 Use Tailwind classes mapped to design tokens (`bg-panel`, `text-muted`, `bg-pill-crit-bg` …). Charts read tokens at runtime. No hex colors in app code.

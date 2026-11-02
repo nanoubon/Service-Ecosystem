@@ -9,7 +9,7 @@ export default {
         bg: v('color-bg'), sidebar: v('color-sidebar'), panel: v('color-panel'), 'panel-2': v('color-panel-2'),
         border: v('color-border'), divider: v('color-divider'),
         text: v('color-text'), muted: v('color-text-muted'), subtle: v('color-text-subtle'), mono: v('color-mono'),
-        primary: v('color-primary'), 'primary-light': v('color-primary-light'), accent: v('color-accent'),
+        primary: v('color-primary'), 'primary-strong': v('color-primary-strong'), 'primary-light': v('color-primary-light'), accent: v('color-accent'),
         ok: v('color-ok'), warn: v('color-warn'), crit: v('color-crit'),
         pill: {
           'crit-fg': v('pill-crit-fg'), 'crit-bg': v('pill-crit-bg'), 'warn-fg': v('pill-warn-fg'), 'warn-bg': v('pill-warn-bg'),

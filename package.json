@@ -2,13 +2,18 @@
   "name": "service-ecosystem",
   "private": true,
   "type": "module",
-  "workspaces": ["packages/*", "mocks", "apps/*"],
+  "workspaces": [
+    "packages/*",
+    "mocks",
+    "apps/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w @enco/enco-xp",
     "build": "npm run build -w @enco/enco-xp",
     "preview": "npm run preview -w @enco/enco-xp",
     "lint": "eslint .",
-    "typecheck": "tsc -p packages/contract && tsc -p mocks && tsc -p apps/enco-xp"
+    "typecheck": "tsc -p packages/contract && tsc -p mocks && tsc -p apps/enco-xp",
+    "test:e2e": "npm run test:e2e -w @enco/enco-xp"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

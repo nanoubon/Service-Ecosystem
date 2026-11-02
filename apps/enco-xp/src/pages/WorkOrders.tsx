@@ -14,7 +14,7 @@ export default function WorkOrders() {
       <QueryState q={q}>{(rows) => (
         <DataTable rows={rows.filter((f) => f.work_order_ref)} rowKey={(f) => f.finding_id} empty="ยังไม่มี Work Order" columns={[
           { key: 'wo', header: 'Work Order', render: (f) => <Mono>{f.work_order_ref}</Mono> },
-          { key: 'f', header: 'Finding', render: (f) => <Link className="text-primary-light" to={`/findings/${f.finding_id}`}>{f.finding_id} · {f.title}</Link> },
+          { key: 'f', header: 'Finding', render: (f) => <Link className="text-primary-light underline" to={`/findings/${f.finding_id}`}>{f.finding_id} · {f.title}</Link> },
           { key: 'a', header: 'Asset', render: (f) => <Mono>{f.asset_id}</Mono> },
           { key: 'by', header: 'Verified by', render: (f) => f.verified_by },
           { key: 's', header: 'State', render: (f) => <StatusPill value={f.wo_state ?? 'OPEN'} label={f.wo_state?.replace('_', ' ')} /> },

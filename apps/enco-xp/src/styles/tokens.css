@@ -4,9 +4,10 @@
   --color-bg:#0b1220; --color-sidebar:#0d1526; --color-panel:#111a2e; --color-panel-2:#16213a;
   --color-border:#22304d; --color-divider:#1a2540;
   /* Text */
-  --color-text:#e6ecf7; --color-text-muted:#8a98b5; --color-text-subtle:#5b6a88; --color-mono:#a5b4d4;
+  --color-text:#e6ecf7; --color-text-muted:#8a98b5; --color-text-subtle:#8190b0; /* a11y v0.1.1: was #5b6a88 (3.35:1), now ≥4.5:1 on sidebar/bg */ --color-mono:#a5b4d4;
   /* Brand / chart */
   --color-primary:#3b82f6; --color-primary-light:#60a5fa; --color-accent:#22d3ee;
+  --color-primary-strong:#1d4ed8; /* a11y v0.1.1: filled-button bg, ≥4.5:1 with --color-text */
   /* Semantic */
   --color-ok:#22c55e; --color-warn:#f59e0b; --color-crit:#ef4444;
   /* Status pills (fg / bg) — severity, status, quality_flag */

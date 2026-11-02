@@ -22,7 +22,7 @@ export default function FindingDetail() {
       return (
         <>
           <PageHeader title={<>{f.title} <StatusPill value={f.severity} /></>}
-            subtitle={<><Mono>{f.finding_id}</Mono> · <Link className="text-primary-light" to={`/assets/${f.asset_id}`}>{f.asset_id}</Link> · ตรวจพบ {fmtDate(f.detected_at)}</>}
+            subtitle={<><Mono>{f.finding_id}</Mono> · <Link className="text-primary-light underline" to={`/assets/${f.asset_id}`}>{f.asset_id}</Link> · ตรวจพบ {fmtDate(f.detected_at)}</>}
             actions={f.status === 'PENDING' ? <>
               <button className="btn btn-danger" onClick={() => setModal('reject')}>Reject</button>
               <button className="btn btn-primary" onClick={() => setModal('wo')}>Verify &amp; Create Work Order</button>

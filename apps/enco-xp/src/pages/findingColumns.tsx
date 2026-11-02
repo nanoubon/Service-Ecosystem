@@ -5,7 +5,7 @@ export const STATUS_LABEL: Record<string, string> = { PENDING: 'Pending', VERIFI
 
 export const findingColumns: Column<FindingView>[] = [
   { key: 'id', header: 'ID', render: (f) => <Mono>{f.finding_id}</Mono> },
-  { key: 'title', header: 'Finding', render: (f) => <><b>{f.title}</b><div className="text-sm text-muted"><Mono>{f.asset_id}</Mono> · {f.rule_id}</div></> },
+  { key: 'title', header: 'Finding', render: (f) => <><b>{f.title}</b><div className="text-sm text-muted"><Mono>{f.asset_id}</Mono> · {f.rule_id}</div>{f.rejection_reason && <div className="text-sm text-pill-crit-fg" data-testid="rejection-reason">เหตุผล: {f.rejection_reason}</div>}</> },
   { key: 'sev', header: 'Severity', render: (f) => <StatusPill value={f.severity} /> },
   { key: 'status', header: 'Status', render: (f) => <StatusPill value={f.status} label={STATUS_LABEL[f.status]} /> },
   { key: 'det', header: 'Detected', render: (f) => <span className="text-muted">{fmtDate(f.detected_at)}</span> },

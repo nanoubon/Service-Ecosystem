@@ -1,4 +1,6 @@
-/** EnCo Pilot Data Contract v0.1 — see docs/adr. Field names are snake_case to match the wire format. */
+/** EnCo Pilot Data Contract v0.2 (see CHANGELOG.md) — see docs/adr. Field names are snake_case to match the wire format. */
+
+export const CONTRACT_VERSION = '0.2.0' as const;
 
 export type AssetId = string; // EnPrompt Asset ID is the canonical key (ADR-001)
 
@@ -31,18 +33,31 @@ export interface Finding {
   work_order_ref: string | null;
 }
 
+/** Default PENDING. Savings figures may only be displayed when VERIFIED. */
 export type MvStatus = 'PENDING' | 'VERIFIED' | 'DISPUTED';
+export const MV_STATUS_DEFAULT: MvStatus = 'PENDING';
+export type Currency = 'THB';
+
+/** Allowed Finding transitions. CLOSED is reachable only from VERIFIED. */
+export const FINDING_TRANSITIONS: Record<FindingStatus, FindingStatus[]> = {
+  PENDING: ['VERIFIED', 'REJECTED'],
+  VERIFIED: ['CLOSED'],
+  REJECTED: [],
+  CLOSED: [],
+};
+export const canTransition = (from: FindingStatus, to: FindingStatus) => FINDING_TRANSITIONS[from].includes(to);
 
 export interface Savings {
   savings_id: string;
   finding_id: string;
   asset_id: AssetId;
-  period_start: string;
-  period_end: string;
-  baseline_kwh: number;
-  actual_kwh: number;
-  savings_kwh: number;
-  savings_thb: number;
+  period_start: string; // ISO date
+  period_end: string; // ISO date
+  baseline_energy_kwh: number;
+  actual_energy_kwh: number;
+  savings_energy_kwh: number;
+  savings_amount_thb: number;
+  currency: Currency;
   method: string; // e.g. IPMVP Option B
   mv_status: MvStatus;
 }

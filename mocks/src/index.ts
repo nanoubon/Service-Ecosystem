@@ -24,8 +24,9 @@ export const findings: FindingView[] = [
 ];
 
 export const savings: Savings[] = [
-  { savings_id: 'S-001', finding_id: 'F-0008', asset_id: 'ENP-CH-001', period_start: '2026-10-21', period_end: '2026-11-01', baseline_kwh: 52400, actual_kwh: 50100, savings_kwh: 2300, savings_thb: 9890, method: 'IPMVP Option B', mv_status: 'PENDING' },
-  { savings_id: 'S-002', finding_id: 'F-0009', asset_id: 'ENP-CH-002', period_start: '2026-10-29', period_end: '2026-11-01', baseline_kwh: 18100, actual_kwh: 17450, savings_kwh: 650, savings_thb: 2795, method: 'IPMVP Option B', mv_status: 'PENDING' },
+  { savings_id: 'S-001', finding_id: 'F-0008', asset_id: 'ENP-CH-001', period_start: '2026-10-21', period_end: '2026-11-01', baseline_energy_kwh: 52400, actual_energy_kwh: 50100, savings_energy_kwh: 2300, savings_amount_thb: 9890, currency: 'THB', method: 'IPMVP Option B', mv_status: 'VERIFIED' },
+  { savings_id: 'S-002', finding_id: 'F-0009', asset_id: 'ENP-CH-002', period_start: '2026-10-29', period_end: '2026-11-01', baseline_energy_kwh: 18100, actual_energy_kwh: 17450, savings_energy_kwh: 650, savings_amount_thb: 2795, currency: 'THB', method: 'IPMVP Option B', mv_status: 'PENDING' },
+  { savings_id: 'S-003', finding_id: 'F-0006', asset_id: 'ENP-CT-001', period_start: '2026-10-10', period_end: '2026-10-20', baseline_energy_kwh: 9000, actual_energy_kwh: 8800, savings_energy_kwh: 200, savings_amount_thb: 860, currency: 'THB', method: 'IPMVP Option B', mv_status: 'DISPUTED' },
 ];
 
 /** Deterministic pseudo-random series for charts */
