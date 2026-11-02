@@ -95,6 +95,7 @@ export interface FindingView extends Finding {
 export interface CreateWorkOrderRequest { finding_id: string; priority: 'High' | 'Medium' | 'Low'; due_date: string; }
 export interface RejectFindingRequest { finding_id: string; reason: string; }
 
+export const SAVINGS_THB_TOLERANCE = 0.01;
 const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
 
 /** Savings consistency rules (v0.2.1). Returns a list of violations; empty = valid. */
@@ -104,6 +105,7 @@ export function validateSavings(s: Savings): string[] {
   if (!(Date.parse(s.period_end) > Date.parse(s.period_start))) e.push('period_end must be after period_start');
   if (!(s.tariff_thb_per_kwh > 0)) e.push('tariff_thb_per_kwh must be > 0');
   if (round2(s.baseline_energy_kwh - s.actual_energy_kwh) !== round2(s.savings_energy_kwh)) e.push('savings_energy_kwh must equal baseline_energy_kwh - actual_energy_kwh');
-  if (round2(s.savings_energy_kwh * s.tariff_thb_per_kwh) !== round2(s.savings_amount_thb)) e.push('savings_amount_thb must equal savings_energy_kwh * tariff_thb_per_kwh (2dp)');
+  // tolerance 0.01 THB (+ tiny epsilon for float error)
+  if (Math.abs(s.savings_amount_thb - s.savings_energy_kwh * s.tariff_thb_per_kwh) > SAVINGS_THB_TOLERANCE + 1e-9) e.push(`savings_amount_thb must be within ${SAVINGS_THB_TOLERANCE} THB of savings_energy_kwh * tariff_thb_per_kwh`);
   return e;
 }

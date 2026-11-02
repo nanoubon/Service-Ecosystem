@@ -5,7 +5,7 @@ Pilot UI for chiller-plant Facility Intelligence (RaaS/EaaS, read-only/advisory)
 > ⚠️ All data in this repo is **fake demo data**. Do not commit real customer data, site names, or credentials.
 
 ## Setup
-Requires Node 24+ (unit tests use native TS type stripping).
+**Requires Node 24+** (pinned in `.nvmrc`; run `nvm use` to switch). The unit tests use Node 24's built-in TypeScript type stripping, and CI reads its Node version from `.nvmrc` (`node-version-file`).
 ```bash
 npm install
 npm run dev        # http://localhost:5173 (MSW mocks enabled)

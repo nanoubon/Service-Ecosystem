@@ -13,9 +13,12 @@ test('period_end must be after period_start', () => {
   assert.match(validateSavings({ ...ok, period_end: '2026-10-01' }).join(), /period_end/);
   assert.match(validateSavings({ ...ok, period_end: '2026-09-30' }).join(), /period_end/);
 });
-test('amount = energy * tariff rounded to 2dp', () => {
-  assert.deepEqual(validateSavings({ ...ok, savings_amount_thb: 539.695 }), []); // rounds to 539.70
-  assert.match(validateSavings({ ...ok, savings_amount_thb: 540 }).join(), /savings_amount_thb/);
+test('amount within ±0.01 THB of energy * tariff (123.5 * 4.37 = 539.695)', () => {
+  assert.deepEqual(validateSavings({ ...ok, savings_amount_thb: 539.695 }), []); // exact
+  assert.deepEqual(validateSavings({ ...ok, savings_amount_thb: 539.705 }), []); // +0.01 passes
+  assert.deepEqual(validateSavings({ ...ok, savings_amount_thb: 539.685 }), []); // -0.01 passes
+  assert.match(validateSavings({ ...ok, savings_amount_thb: 539.715 }).join(), /savings_amount_thb/); // +0.02 fails
+  assert.match(validateSavings({ ...ok, savings_amount_thb: 539.675 }).join(), /savings_amount_thb/); // -0.02 fails
 });
 test('method must be IPMVP_A|B|C|D', () => assert.match(validateSavings({ ...ok, method: 'IPMVP Option B' as never }).join(), /method/));
 test('tariff must be > 0', () => assert.match(validateSavings({ ...ok, tariff_thb_per_kwh: 0 }).join(), /tariff/));
