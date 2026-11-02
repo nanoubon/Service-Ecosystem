@@ -28,7 +28,8 @@ export default function MV() {
                 { key: 'b', header: 'Baseline (kWh)', render: (r) => show(r, r.baseline_energy_kwh.toLocaleString()) },
                 { key: 'a', header: 'Actual (kWh)', render: (r) => show(r, r.actual_energy_kwh.toLocaleString()) },
                 { key: 's', header: 'Savings', render: (r) => show(r, `${r.savings_energy_kwh.toLocaleString()} kWh · ${r.savings_amount_thb.toLocaleString()} ${r.currency}`) },
-                { key: 'm', header: 'Method', render: (r) => r.method },
+                { key: 'm', header: 'Method', render: (r) => r.method.replace('_', ' Option ') },
+                { key: 't', header: 'Tariff (THB/kWh)', render: (r) => r.tariff_thb_per_kwh.toFixed(2) },
                 { key: 'st', header: 'mv_status', render: (r) => <StatusPill value={r.mv_status} /> },
               ]} />
             </Card>

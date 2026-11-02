@@ -35,5 +35,8 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

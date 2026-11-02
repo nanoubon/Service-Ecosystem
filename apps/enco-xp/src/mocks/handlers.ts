@@ -1,7 +1,7 @@
 // The ONLY place in the app that reads fixtures from /mocks. Pages use src/api.
 import { http, HttpResponse, delay } from 'msw';
 import { assets, findings as seed, savings, series, telemetry } from '@enco/mocks';
-import { canTransition, type CreateWorkOrderRequest, type FindingView } from '@enco/contract';
+import { canTransition, validateSavings, type Savings, type CreateWorkOrderRequest, type FindingView } from '@enco/contract';
 
 const findings: FindingView[] = structuredClone(seed);
 let woSeq = 1200;
@@ -73,7 +73,14 @@ export const handlers = [
     const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
     f.wo_state = 'IN_PROGRESS'; return HttpResponse.json(f);
   }),
-  http.get('/api/savings', () => HttpResponse.json(savings)),
+  http.get('/api/savings', () => {
+    const bad = savings.map((s) => [s.savings_id, validateSavings(s)] as const).filter(([, e]) => e.length);
+    return bad.length ? HttpResponse.json({ error: 'invalid fixtures', bad }, { status: 500 }) : HttpResponse.json(savings);
+  }),
+  http.post('/api/savings/validate', async ({ request }) => {
+    const errors = validateSavings((await request.json()) as Savings);
+    return HttpResponse.json({ errors }, { status: errors.length ? 422 : 200 });
+  }),
   http.get('/api/data-quality', () => HttpResponse.json(
     assets.flatMap((a) => a.tags.map((t) => ({ asset_id: a.asset_id, tag: t.tag, unit: t.unit, quality_flag: t.quality_flag,
       completeness: t.quality_flag === 'GOOD' ? 99.6 : t.quality_flag === 'SUSPECT' ? 94.2 : 61.0, last_seen: '2026-11-02T12:00:00+07:00' }))),

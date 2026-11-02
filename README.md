@@ -5,7 +5,7 @@ Pilot UI for chiller-plant Facility Intelligence (RaaS/EaaS, read-only/advisory)
 > ⚠️ All data in this repo is **fake demo data**. Do not commit real customer data, site names, or credentials.
 
 ## Setup
-Requires Node 20+.
+**Requires Node 24+** (pinned in `.nvmrc`; run `nvm use` to switch). The unit tests use Node 24's built-in TypeScript type stripping, and CI reads its Node version from `.nvmrc` (`node-version-file`).
 ```bash
 npm install
 npm run dev        # http://localhost:5173 (MSW mocks enabled)
@@ -19,6 +19,7 @@ npm run dev        # http://localhost:5173 (MSW mocks enabled)
 | `npm run preview` | Serve the build on :4173 |
 | `npm run lint` | ESLint (incl. mock-import rule) |
 | `npm run typecheck` | `tsc` for contract, mocks, app |
+| `npm run test:unit` | Contract unit tests (node:test) |
 | `npm run test:e2e` | Playwright E2E + axe (WCAG 2.1 AA serious/critical) against `vite preview` with MSW |
 
 Set `VITE_USE_MOCKS=false` to disable MSW once a real API exists.

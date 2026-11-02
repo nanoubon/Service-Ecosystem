@@ -145,3 +145,15 @@ test('Heading order and landmarks', async ({ page }) => {
     await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
   }
 });
+
+test('M&V shows method + tariff; mock API validates savings math', async ({ page }) => {
+  await open(page, '/mv');
+  const row = page.locator('tbody tr', { hasText: 'S-001' });
+  await expect(row).toContainText('IPMVP Option B');
+  await expect(row).toContainText('4.30');
+  const base = { savings_id: 'S-T', finding_id: 'F-1', asset_id: 'ENP-X', period_start: '2026-10-01', period_end: '2026-10-31', baseline_energy_kwh: 1000, actual_energy_kwh: 900, savings_energy_kwh: 100, tariff_thb_per_kwh: 4.3, savings_amount_thb: 430, currency: 'THB', method: 'IPMVP_B', mv_status: 'PENDING' };
+  expect(await api(page, '/api/savings/validate', 'POST', base)).toBe(200);
+  expect(await api(page, '/api/savings/validate', 'POST', { ...base, savings_energy_kwh: 99 })).toBe(422);
+  expect(await api(page, '/api/savings/validate', 'POST', { ...base, period_end: '2026-09-01' })).toBe(422);
+  expect(await api(page, '/api/savings/validate', 'POST', { ...base, savings_amount_thb: 431 })).toBe(422);
+});

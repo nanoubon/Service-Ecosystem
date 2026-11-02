@@ -14,7 +14,7 @@ export const test = base.extend<{ errors: string[] }>({
   errors: async ({ page }, use) => {
     const errors: string[] = [];
     page.on('pageerror', (e) => errors.push(e.message));
-    page.on('console', (m) => { if (m.type() === 'error' && !/status of (409|500)/.test(m.text())) errors.push(m.text()); });
+    page.on('console', (m) => { if (m.type() === 'error' && !/status of (409|422|500)/.test(m.text())) errors.push(m.text()); });
     await use(errors);
   },
 });
