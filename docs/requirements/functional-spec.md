@@ -160,6 +160,6 @@ R1, R3, S1 ใช้กับทุกหน้า จึงไม่ซ้ำ�
 - `Finding.work_order_ref` ชี้ไปที่ WO ที่ `OPEN` อยู่ **เพียงตัวเดียว**
 - 1 Finding มี WO ที่ `OPEN` ได้สูงสุด 1 ตัว → ถ้าสร้างตัวที่สอง mock ตอบ **409**
 - WO ที่ `CANCELLED` ต้องเก็บไว้ (ไม่ลบ) พร้อม `cancel_reason`
-- การยกเลิก WO **ต้องมี** `cancel_reason` ไม่งั้น mock ตอบ **422** (Architect, 2 Nov 2026)
+- การยกเลิก WO **ต้องมี** `cancel_reason` ไม่งั้น mock ตอบ **422** (ยืนยันโดย PO & Architect, 2 Nov 2026 — เหตุผล: audit trail ว่าแต่ละ WO ถูกยกเลิกเพราะอะไร)
 - `mv_status` DISPUTED → PENDING: เก็บ `dispute_reason` และประวัติการเปลี่ยนสถานะ (status-change history)
-- **AC (planned v0.3):** Given Finding มี WO `OPEN` อยู่แล้ว When สร้าง WO ใหม่ Then API ตอบ 409 และ `work_order_ref` ไม่เปลี่ยน · Given ยกเลิก WO (status → `CANCELLED`) When ไม่ใส่ `cancel_reason` Then ส่งไม่ได้ และ mock ตอบ **422** เหมือนกรณี `rejection_reason` (กฎยืนยันแล้ว — Architect, 2 Nov 2026, planned in Contract v0.3) · Given WO ถูกยกเลิก Then ยังเห็นในประวัติ
+- **AC (planned v0.3):** Given Finding มี WO `OPEN` อยู่แล้ว When สร้าง WO ใหม่ Then API ตอบ 409 และ `work_order_ref` ไม่เปลี่ยน · Given ยกเลิก WO (status → `CANCELLED`) When ไม่ใส่ `cancel_reason` Then ส่งไม่ได้ และ mock ตอบ **422** เหมือนกรณี `rejection_reason` (กฎยืนยันแล้ว — PO & Architect, 2 Nov 2026, planned in Contract v0.3; เหตุผล: audit trail ว่าแต่ละ WO ถูกยกเลิกเพราะอะไร) · Given WO ถูกยกเลิก Then ยังเห็นในประวัติ
