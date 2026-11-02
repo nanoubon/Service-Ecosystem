@@ -13,7 +13,8 @@
     "preview": "npm run preview -w @enco/enco-xp",
     "lint": "eslint .",
     "typecheck": "tsc -p packages/contract && tsc -p mocks && tsc -p apps/enco-xp",
-    "test:e2e": "npm run test:e2e -w @enco/enco-xp"
+    "test:e2e": "npm run test:e2e -w @enco/enco-xp",
+    "test:unit": "node --test packages/contract/test/*.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

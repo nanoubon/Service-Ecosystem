@@ -1,6 +1,6 @@
 /** EnCo Pilot Data Contract v0.2 (see CHANGELOG.md) — see docs/adr. Field names are snake_case to match the wire format. */
 
-export const CONTRACT_VERSION = '0.2.0' as const;
+export const CONTRACT_VERSION = '0.2.1' as const;
 
 export type AssetId = string; // EnPrompt Asset ID is the canonical key (ADR-001)
 
@@ -37,6 +37,8 @@ export interface Finding {
 export type MvStatus = 'PENDING' | 'VERIFIED' | 'DISPUTED';
 export const MV_STATUS_DEFAULT: MvStatus = 'PENDING';
 export type Currency = 'THB';
+export type MvMethod = 'IPMVP_A' | 'IPMVP_B' | 'IPMVP_C' | 'IPMVP_D';
+export const MV_METHODS: readonly MvMethod[] = ['IPMVP_A', 'IPMVP_B', 'IPMVP_C', 'IPMVP_D'];
 
 /** Allowed Finding transitions. CLOSED is reachable only from VERIFIED. */
 export const FINDING_TRANSITIONS: Record<FindingStatus, FindingStatus[]> = {
@@ -57,8 +59,9 @@ export interface Savings {
   actual_energy_kwh: number;
   savings_energy_kwh: number;
   savings_amount_thb: number;
+  tariff_thb_per_kwh: number;
   currency: Currency;
-  method: string; // e.g. IPMVP Option B
+  method: MvMethod;
   mv_status: MvStatus;
 }
 
@@ -91,3 +94,16 @@ export interface FindingView extends Finding {
 
 export interface CreateWorkOrderRequest { finding_id: string; priority: 'High' | 'Medium' | 'Low'; due_date: string; }
 export interface RejectFindingRequest { finding_id: string; reason: string; }
+
+const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
+
+/** Savings consistency rules (v0.2.1). Returns a list of violations; empty = valid. */
+export function validateSavings(s: Savings): string[] {
+  const e: string[] = [];
+  if (!MV_METHODS.includes(s.method)) e.push(`method must be one of ${MV_METHODS.join('|')}`);
+  if (!(Date.parse(s.period_end) > Date.parse(s.period_start))) e.push('period_end must be after period_start');
+  if (!(s.tariff_thb_per_kwh > 0)) e.push('tariff_thb_per_kwh must be > 0');
+  if (round2(s.baseline_energy_kwh - s.actual_energy_kwh) !== round2(s.savings_energy_kwh)) e.push('savings_energy_kwh must equal baseline_energy_kwh - actual_energy_kwh');
+  if (round2(s.savings_energy_kwh * s.tariff_thb_per_kwh) !== round2(s.savings_amount_thb)) e.push('savings_amount_thb must equal savings_energy_kwh * tariff_thb_per_kwh (2dp)');
+  return e;
+}
