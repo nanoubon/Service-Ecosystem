@@ -53,12 +53,23 @@ stateDiagram-v2
   DONE --> CLOSED
 ```
 
+## WorkOrder status — planned in Contract v0.3
+```mermaid
+stateDiagram-v2
+  [*] --> OPEN: create (สูงสุด 1 OPEN ต่อ Finding, ตัวที่สอง → 409)
+  OPEN --> DONE
+  OPEN --> CANCELLED: cancel_reason
+  DONE --> [*]
+  CANCELLED --> [*]: เก็บไว้ ไม่ลบ
+```
+`Finding.work_order_ref` ชี้ไป WO ที่ OPEN ตัวเดียว (planned in Contract v0.3)
+
 ## M&V status (`mv_status`)
 ```mermaid
 stateDiagram-v2
   [*] --> PENDING
   PENDING --> VERIFIED: M&V Engineer ยืนยันตาม IPMVP
   PENDING --> DISPUTED: ลูกค้า/ผู้ตรวจโต้แย้ง
-  DISPUTED --> PENDING: แก้ baseline/ข้อมูล แล้วส่งตรวจใหม่
+  DISPUTED --> PENDING: บันทึก dispute_reason + history (planned v0.3)
 ```
-แสดงตัวเลข Saving เฉพาะ `VERIFIED` · transition DISPUTED→PENDING เป็น **Assumption** (Contract ยังไม่กำหนด) — ขอ Architect ยืนยัน
+แสดงตัวเลข Saving เฉพาะ `VERIFIED` · DISPUTED→PENDING พร้อม `dispute_reason` และ status-change history = **planned in Contract v0.3** (Architect ยืนยันแล้ว ยังไม่มีในโค้ด)

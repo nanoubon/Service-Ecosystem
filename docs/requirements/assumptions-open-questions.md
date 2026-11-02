@@ -11,6 +11,6 @@
 | Q5 | On-prem หรือ Cloud, ใครเป็นเจ้าของ action ฝั่ง GCME | **ASSUMPTION:** Cloud ในไทย (data residency) สำหรับ Pilot; GCME มี Facility Manager 1 คนเป็นผู้รับ/ปิด WO | ADR-005, Security |
 
 ## Assumptions อื่น
-- 1 Finding : 1 Work Order ใน Pilot
-- `mv_status` DISPUTED → PENDING ได้หลังแก้ข้อมูล
+- ~~1 Finding : 1 WO~~ → แทนด้วย Architect decision: OPEN WO ได้ 1 ตัวต่อ Finding, WO ที่ CANCELLED เก็บไว้ (planned in Contract v0.3)
+- DISPUTED → PENDING พร้อม `dispute_reason` + history (planned in Contract v0.3)
 - Tariff เป็นอัตราเดียวต่อช่วง Savings (ยังไม่แยก TOU)

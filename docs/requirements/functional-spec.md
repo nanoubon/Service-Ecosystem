@@ -110,7 +110,7 @@ R1, R3, S1 ใช้กับทุกหน้า จึงไม่ซ้ำ�
 - **Purpose:** ส่งคำแนะนำไปเป็น WO ใน EnPrompt และติดตามสถานะ
 - **API:** `POST /api/findings/:id/work-order` (body `CreateWorkOrderRequest`), `POST .../wo-complete`
 - **Fields:** `priority (High|Medium|Low), due_date, work_order_ref, wo_state (OPEN|IN_PROGRESS|DONE|CLOSED)`
-- **Rules:** สร้างได้เฉพาะ Finding ที่ผ่าน Verify; 1 Finding : 1 WO ใน Pilot (Assumption); EnPrompt เป็นเจ้าของ `wo_state` ฝั่ง XP แสดงอย่างเดียว; Pilot ใช้ mock แทน EnPrompt API (Q2)
+- **Rules:** สร้างได้เฉพาะ Finding ที่ผ่าน Verify; OPEN WO ได้ 1 ตัวต่อ Finding (planned in Contract v0.3); EnPrompt เป็นเจ้าของ `wo_state` ฝั่ง XP แสดงอย่างเดียว; Pilot ใช้ mock แทน EnPrompt API (Q2)
 - **AC:**
   - Given Finding VERIFIED When เปิด `/work-orders` Then เห็น WO พร้อม `work_order_ref`, priority, due date
   - Given priority หรือ due_date ว่าง When กด Create Then ส่งไม่ได้
@@ -153,3 +153,12 @@ R1, R3, S1 ใช้กับทุกหน้า จึงไม่ซ้ำ�
 ---
 ## Out of scope (Pilot)
 ตัวเลือก Site, กระดิ่งแจ้งเตือน, sort/pagination ของตาราง (Story แยก), การเขียนค่ากลับ BMS, หลาย plant
+
+---
+## Planned in Contract v0.3 (Architect decision — ยังไม่มีในโค้ด)
+- **WorkOrder entity:** `{ work_order_id, finding_id, status: OPEN | CANCELLED | DONE, cancel_reason, created_at }`
+- `Finding.work_order_ref` ชี้ไปที่ WO ที่ `OPEN` อยู่ **เพียงตัวเดียว**
+- 1 Finding มี WO ที่ `OPEN` ได้สูงสุด 1 ตัว → ถ้าสร้างตัวที่สอง mock ตอบ **409**
+- WO ที่ `CANCELLED` ต้องเก็บไว้ (ไม่ลบ) พร้อม `cancel_reason`
+- `mv_status` DISPUTED → PENDING: เก็บ `dispute_reason` และประวัติการเปลี่ยนสถานะ (status-change history)
+- **AC (planned v0.3):** Given Finding มี WO `OPEN` อยู่แล้ว When สร้าง WO ใหม่ Then API ตอบ 409 และ `work_order_ref` ไม่เปลี่ยน · Given ยกเลิก WO When ไม่ใส่ `cancel_reason` Then ส่งไม่ได้ (ข้อเสนอ BA) · Given WO ถูกยกเลิก Then ยังเห็นในประวัติ
