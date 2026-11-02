@@ -2,13 +2,13 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useFindings } from '../api';
 
 const NAV = [
-  { group: 'Monitor', items: [['/', 'Overview'], ['/assets', 'Asset Health'], ['/energy', 'Energy']] },
+  { group: 'Monitor', items: [['/', 'Overview'], ['/asset-health', 'Asset Health'], ['/energy', 'Energy']] },
   { group: 'Act', items: [['/findings', 'Findings'], ['/work-orders', 'Work Orders'], ['/verification', 'Verification']] },
   { group: 'Report', items: [['/mv', 'M&V'], ['/data-quality', 'Data Quality']] },
 ] as const;
 
 const TITLES: [RegExp, string][] = [
-  [/^\/$/, 'Overview'], [/^\/assets\/.+/, 'Asset Health / Asset Detail'], [/^\/assets/, 'Asset Health'], [/^\/energy/, 'Energy'],
+  [/^\/$/, 'Overview'], [/^\/asset-health\/.+/, 'Asset Health / Asset Detail'], [/^\/asset-health/, 'Asset Health'], [/^\/energy/, 'Energy'],
   [/^\/findings\/.+/, 'Findings / Finding Detail'], [/^\/findings/, 'Findings'], [/^\/work-orders/, 'Work Orders'],
   [/^\/verification/, 'Verification'], [/^\/mv/, 'M&V'], [/^\/data-quality/, 'Data Quality'],
 ];

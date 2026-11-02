@@ -11,7 +11,7 @@ export default function AssetHealth() {
     <>
       <PageHeader title="Asset Health" subtitle="อุปกรณ์ใน Chiller Plant · อ้างอิง EnPrompt Asset ID (ADR-001)" />
       <QueryState q={q}>{(rows) => (
-        <DataTable rows={rows} rowKey={(a) => a.asset_id} onRowClick={(a) => nav(`/assets/${a.asset_id}`)} columns={[
+        <DataTable rows={rows} rowKey={(a) => a.asset_id} onRowClick={(a) => nav(`/asset-health/${a.asset_id}`)} columns={[
           { key: 'id', header: 'Asset ID', render: (a) => <Mono>{a.asset_id}</Mono> },
           { key: 'name', header: 'Asset', render: (a) => <><b>{a.name}</b><div className="text-sm text-muted">{a.type}</div></> },
           { key: 'crit', header: 'Criticality', render: (a) => a.criticality },

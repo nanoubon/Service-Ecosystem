@@ -25,7 +25,7 @@ for (const [path] of ROUTES) {
 
     await page.evaluate(setScenario(), 'empty');
     await page.goto(path);
-    if (!/^\/(energy|findings\/|assets\/)$/.test(path) && !/\/(findings|assets)\/.+/.test(path) && path !== '/energy') {
+    if (!/^\/(energy|findings\/|asset-health\/)$/.test(path) && !/\/(findings|asset-health)\/.+/.test(path) && path !== '/energy') {
       const empty = page.getByTestId('state-empty').first();
       await expect(empty).toBeVisible();
       await expect(empty.getByRole('button', { name: 'รีเฟรช' })).toBeVisible();

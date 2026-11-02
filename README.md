@@ -37,7 +37,7 @@ docs/adr/             ADR-001..006
 ```
 
 ## Pages
-Overview `/` · Asset Health `/assets` · Asset Detail `/assets/:id` · Energy `/energy` · Findings `/findings` · Finding Detail `/findings/:id` · Work Orders `/work-orders` · Verification `/verification` · M&V `/mv` · Data Quality `/data-quality`
+Overview `/` · Asset Health `/asset-health` · Asset Detail `/asset-health/:id` · Energy `/energy` · Findings `/findings` · Finding Detail `/findings/:id` · Work Orders `/work-orders` · Verification `/verification` · M&V `/mv` · Data Quality `/data-quality`
 
 ## Mock rule
 Pages and components **must not import mocks**. They call hooks from `src/api`, which hit `/api/*`; MSW intercepts those in the browser. ESLint fails the build if `src/pages` or `src/components` import `@enco/mocks` or any `mocks` path.
