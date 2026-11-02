@@ -107,17 +107,17 @@ test('Data Quality flags on page and on asset charts', async ({ page }) => {
   await expect(page.locator('tbody tr', { hasText: 'CHP1_VIB' })).toContainText('SUSPECT');
   await expect(page.locator('tbody tr', { hasText: 'CT1_FAN_HZ' })).toContainText('MISSING');
   await page.screenshot({ path: `${SHOTS}/data-quality.png` });
-  await open(page, '/assets/ENP-CHP-001');
+  await open(page, '/asset-health/ENP-CHP-001');
   await page.getByLabel('tag').selectOption('CHP1_VIB');
   await expect(page.getByTestId('chart-quality')).toContainText('SUSPECT');
-  await open(page, '/assets/ENP-CT-001');
+  await open(page, '/asset-health/ENP-CT-001');
   await expect(page.getByTestId('chart-quality')).toContainText('MISSING');
 });
 
 test('Asset Health row opens detail; kW/RT with unit and quality_flag', async ({ page }) => {
-  await open(page, '/assets');
+  await open(page, '/asset-health');
   await page.locator('tbody tr', { hasText: 'ENP-CH-002' }).click();
-  await expect(page).toHaveURL(/assets\/ENP-CH-002$/);
+  await expect(page).toHaveURL(/asset-health\/ENP-CH-002$/);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Chiller #2');
   const kpi = page.locator('.card', { hasText: 'Efficiency' });
   await expect(kpi).toContainText('0.64');

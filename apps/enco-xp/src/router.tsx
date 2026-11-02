@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter, useParams } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import Overview from './pages/Overview';
 import AssetHealth from './pages/AssetHealth';
@@ -14,8 +14,11 @@ import DataQuality from './pages/DataQuality';
 export const router = createBrowserRouter([
   { path: '/', element: <Layout />, children: [
     { index: true, element: <Overview /> },
-    { path: 'assets', element: <AssetHealth /> },
-    { path: 'assets/:assetId', element: <AssetDetail /> },
+    { path: 'asset-health', element: <AssetHealth /> },
+    { path: 'asset-health/:assetId', element: <AssetDetail /> },
+    // legacy links: /assets → /asset-health
+    { path: 'assets', element: <Navigate to="/asset-health" replace /> },
+    { path: 'assets/:assetId', element: <LegacyAssetRedirect /> },
     { path: 'energy', element: <Energy /> },
     { path: 'findings', element: <Findings /> },
     { path: 'findings/:findingId', element: <FindingDetail /> },
@@ -25,3 +28,8 @@ export const router = createBrowserRouter([
     { path: 'data-quality', element: <DataQuality /> },
   ] },
 ]);
+
+function LegacyAssetRedirect() {
+  const { assetId = '' } = useParams();
+  return <Navigate to={`/asset-health/${assetId}`} replace />;
+}

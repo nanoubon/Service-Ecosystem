@@ -14,7 +14,7 @@ for (const [path, heading] of ROUTES) {
 
 test('sidebar nav links reach correct routes', async ({ page, errors }) => {
   await open(page, '/');
-  const nav = [['Asset Health', '/assets'], ['Energy', '/energy'], ['Findings', '/findings'], ['Work Orders', '/work-orders'], ['Verification', '/verification'], ['M&V', '/mv'], ['Data Quality', '/data-quality'], ['Overview', '/']];
+  const nav = [['Asset Health', '/asset-health'], ['Energy', '/energy'], ['Findings', '/findings'], ['Work Orders', '/work-orders'], ['Verification', '/verification'], ['M&V', '/mv'], ['Data Quality', '/data-quality'], ['Overview', '/']];
   for (const [label, url] of nav) {
     await page.getByRole('navigation').getByRole('link', { name: new RegExp(`^${label.replace('&', '\\&')}`) }).click();
     await expect(page).toHaveURL(new RegExp(`${url}$`));
@@ -35,3 +35,11 @@ for (const width of [1280, 1920]) {
     await page.screenshot({ path: `${SHOTS}/overview-${width}.png` });
   });
 }
+
+test('legacy /assets links redirect to /asset-health', async ({ page }) => {
+  await open(page, '/assets');
+  await expect(page).toHaveURL(/\/asset-health$/);
+  await open(page, '/assets/ENP-CH-002');
+  await expect(page).toHaveURL(/\/asset-health\/ENP-CH-002$/);
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Chiller #2');
+});

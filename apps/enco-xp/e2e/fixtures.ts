@@ -4,7 +4,7 @@ import AxeBuilder from '@axe-core/playwright';
 export const SHOTS = process.env.E2E_SHOT_DIR ?? 'test-results/shots';
 
 export const ROUTES = [
-  ['/', 'Overview'], ['/assets', 'Asset Health'], ['/assets/ENP-CH-001', 'Chiller #1'], ['/energy', 'Energy'],
+  ['/', 'Overview'], ['/asset-health', 'Asset Health'], ['/asset-health/ENP-CH-001', 'Chiller #1'], ['/energy', 'Energy'],
   ['/findings', 'Findings'], ['/findings/F-0012', 'Condenser approach'], ['/work-orders', 'Work Orders'],
   ['/verification', 'Verification'], ['/mv', 'M&V'], ['/data-quality', 'Data Quality'],
 ] as const;
