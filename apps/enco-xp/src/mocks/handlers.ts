@@ -1,0 +1,67 @@
+// The ONLY place in the app that reads fixtures from /mocks. Pages use src/api.
+import { http, HttpResponse, delay } from 'msw';
+import { assets, findings as seed, savings, series, telemetry } from '@enco/mocks';
+import type { CreateWorkOrderRequest, FindingView } from '@enco/contract';
+
+const findings: FindingView[] = structuredClone(seed);
+let woSeq = 1200;
+const byId = (id: string) => findings.find((f) => f.finding_id === id);
+
+export const handlers = [
+  http.get('/api/overview', async () => {
+    await delay(200);
+    return HttpResponse.json({
+      kw_per_rt: 0.68, kw_per_rt_baseline: 0.72, plant_load_rt: 1380, energy_today_kwh: 18420,
+      pending_findings: findings.filter((f) => f.status === 'PENDING').length,
+      savings_thb_mtd: savings.reduce((s, x) => s + x.savings_thb, 0),
+      trend: { labels: Array.from({ length: 84 }, (_, i) => `${i}`), actual: series(84, 0.68, 0.05, 7), baseline: series(84, 0.72, 0.02, 11) },
+    });
+  }),
+  http.get('/api/assets', async () => { await delay(150); return HttpResponse.json(assets); }),
+  http.get('/api/assets/:id', ({ params }) => {
+    const a = assets.find((x) => x.asset_id === params.id);
+    return a ? HttpResponse.json(a) : new HttpResponse(null, { status: 404 });
+  }),
+  http.get('/api/telemetry', ({ request }) => {
+    const u = new URL(request.url); const asset = u.searchParams.get('asset_id')!; const tag = u.searchParams.get('tag')!;
+    const t = assets.find((a) => a.asset_id === asset)?.tags.find((x) => x.tag === tag);
+    return t ? HttpResponse.json(telemetry(asset, tag, t.unit, t.quality_flag)) : HttpResponse.json([]);
+  }),
+  http.get('/api/energy', () => HttpResponse.json({
+    hourly_load_rt: [620, 580, 560, 600, 760, 980, 1210, 1380, 1490, 1520, 1500, 1460, 1400, 1320, 1180, 980, 820, 700],
+    kw_per_rt_by_chiller: assets.filter((a) => a.kw_per_rt != null).map((a) => ({ asset_id: a.asset_id, name: a.name, kw_per_rt: a.kw_per_rt })),
+  })),
+  http.get('/api/findings', async () => { await delay(150); return HttpResponse.json(findings); }),
+  http.get('/api/findings/:id', ({ params }) => {
+    const f = byId(String(params.id)); return f ? HttpResponse.json(f) : new HttpResponse(null, { status: 404 });
+  }),
+  http.post('/api/findings/:id/work-order', async ({ params, request }) => {
+    const f = byId(String(params.id)); if (!f || f.status !== 'PENDING') return new HttpResponse(null, { status: 409 });
+    const body = (await request.json()) as CreateWorkOrderRequest; void body;
+    Object.assign(f, { status: 'VERIFIED', verified_by: 'Demo Engineer', work_order_ref: `WO-DEMO-${++woSeq}`, wo_state: 'IN_PROGRESS', after: +(f.target + (f.before - f.target) * 0.15).toFixed(1) });
+    return HttpResponse.json(f);
+  }),
+  http.post('/api/findings/:id/reject', async ({ params, request }) => {
+    const f = byId(String(params.id)); const { reason } = (await request.json()) as { reason: string };
+    if (!f || !reason?.trim()) return HttpResponse.json({ error: 'rejection_reason required' }, { status: 400 });
+    Object.assign(f, { status: 'REJECTED', verified_by: 'Demo Engineer', rejection_reason: reason });
+    return HttpResponse.json(f);
+  }),
+  http.post('/api/findings/:id/wo-complete', ({ params }) => {
+    const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
+    f.wo_state = 'DONE'; return HttpResponse.json(f);
+  }),
+  http.post('/api/findings/:id/close', ({ params }) => {
+    const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
+    Object.assign(f, { status: 'CLOSED', wo_state: 'CLOSED' }); return HttpResponse.json(f);
+  }),
+  http.post('/api/findings/:id/reopen', ({ params }) => {
+    const f = byId(String(params.id)); if (!f) return new HttpResponse(null, { status: 404 });
+    f.wo_state = 'IN_PROGRESS'; return HttpResponse.json(f);
+  }),
+  http.get('/api/savings', () => HttpResponse.json(savings)),
+  http.get('/api/data-quality', () => HttpResponse.json(
+    assets.flatMap((a) => a.tags.map((t) => ({ asset_id: a.asset_id, tag: t.tag, unit: t.unit, quality_flag: t.quality_flag,
+      completeness: t.quality_flag === 'GOOD' ? 99.6 : t.quality_flag === 'SUSPECT' ? 94.2 : 61.0, last_seen: '2026-11-02T12:00:00+07:00' }))),
+  )),
+];

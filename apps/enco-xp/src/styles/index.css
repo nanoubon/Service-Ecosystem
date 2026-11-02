@@ -1,0 +1,14 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .card { @apply bg-panel border border-border rounded-lg p-4; }
+  .btn { @apply inline-flex items-center gap-2 rounded-md border border-border bg-panel-2 px-3 py-2 text-base text-text hover:border-primary disabled:opacity-50; }
+  .btn-primary { @apply bg-primary border-primary text-text hover:bg-primary-light; }
+  .btn-danger { @apply text-pill-crit-fg border-crit; }
+  .input { @apply w-full rounded-md border border-border bg-bg px-3 py-2 text-text outline-none focus:border-primary; }
+  .th { @apply px-3 py-2 text-left text-xs uppercase tracking-wide text-muted border-b border-border bg-panel-2; }
+  .td { @apply px-3 py-3 border-b border-divider; }
+}

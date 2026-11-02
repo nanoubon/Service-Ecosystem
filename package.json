@@ -1,0 +1,21 @@
+{
+  "name": "service-ecosystem",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*", "mocks", "apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @enco/enco-xp",
+    "build": "npm run build -w @enco/enco-xp",
+    "preview": "npm run preview -w @enco/enco-xp",
+    "lint": "eslint .",
+    "typecheck": "tsc -p packages/contract && tsc -p mocks && tsc -p apps/enco-xp"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.18.0"
+  }
+}

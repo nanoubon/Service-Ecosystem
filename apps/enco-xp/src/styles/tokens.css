@@ -1,0 +1,26 @@
+/* EnCo-XP Design Tokens v0.1 — source: enco-xp-v2.html */
+:root{
+  /* Surface */
+  --color-bg:#0b1220; --color-sidebar:#0d1526; --color-panel:#111a2e; --color-panel-2:#16213a;
+  --color-border:#22304d; --color-divider:#1a2540;
+  /* Text */
+  --color-text:#e6ecf7; --color-text-muted:#8a98b5; --color-text-subtle:#5b6a88; --color-mono:#a5b4d4;
+  /* Brand / chart */
+  --color-primary:#3b82f6; --color-primary-light:#60a5fa; --color-accent:#22d3ee;
+  /* Semantic */
+  --color-ok:#22c55e; --color-warn:#f59e0b; --color-crit:#ef4444;
+  /* Status pills (fg / bg) — severity, status, quality_flag */
+  --pill-crit-fg:#fca5a5; --pill-crit-bg:#3b1418;   /* High, REJECTED, MISSING */
+  --pill-warn-fg:#fcd34d; --pill-warn-bg:#3a2c0e;   /* Medium, PENDING, SUSPECT */
+  --pill-ok-fg:#86efac;   --pill-ok-bg:#0f2e1b;     /* Low, VERIFIED, CLOSED, GOOD */
+  --pill-info-fg:#93c5fd; --pill-info-bg:#10264a;   /* In Progress */
+  /* Typography */
+  --font-sans:'Inter','Noto Sans Thai','Segoe UI',sans-serif; --font-mono:'JetBrains Mono',Consolas,monospace;
+  --fs-xs:11px; --fs-sm:12px; --fs-base:13.5px; --fs-md:14px; --fs-lg:18px; --fs-xl:22px; --fs-kpi:28px;
+  /* Spacing (4px grid) */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px;
+  /* Radius */
+  --r-sm:6px; --r-md:8px; --r-lg:14px; --r-xl:16px; --r-pill:999px;
+  /* Layout */
+  --sidebar-w:232px; --header-h:58px;
+}
