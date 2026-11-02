@@ -35,3 +35,12 @@ for (const width of [1280, 1920]) {
     await page.screenshot({ path: `${SHOTS}/overview-${width}.png` });
   });
 }
+
+test('axe region rule: all content inside landmarks on every route', async ({ page }) => {
+  const { default: AxeBuilder } = await import('@axe-core/playwright');
+  for (const [path] of ROUTES) {
+    await open(page, path);
+    const r = await new AxeBuilder({ page }).withRules(['region']).analyze();
+    expect(r.violations.map((v) => `${path}: ${v.id} ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)).toEqual([]);
+  }
+});
