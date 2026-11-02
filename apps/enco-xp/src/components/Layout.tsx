@@ -19,13 +19,13 @@ export function Layout() {
   const title = TITLES.find(([re]) => re.test(pathname))?.[1] ?? '';
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 flex h-screen w-sidebar shrink-0 flex-col border-r border-border bg-sidebar">
+      <nav aria-label="Main" className="sticky top-0 flex h-screen w-sidebar shrink-0 flex-col border-r border-border bg-sidebar">
         <div className="flex items-center gap-3 p-5">
           <div className="grid h-8 w-8 place-items-center rounded-md bg-gradient-to-br from-primary to-accent font-bold">E</div>
           <div><b className="block text-md">EnCo-XP</b><small className="text-xs text-subtle">Facility Intelligence · Pilot</small></div>
         </div>
         <div className="mx-3 mb-2 rounded-md border border-border px-3 py-2 text-sm"><span className="text-subtle">Site</span><b className="block">Demo Site · Chiller Plant</b></div>
-        <nav className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           {NAV.map((g) => (
             <div key={g.group}>
               <div className="px-5 pb-1 pt-4 text-xs uppercase tracking-widest text-subtle">{g.group}</div>
@@ -38,12 +38,12 @@ export function Layout() {
               ))}
             </div>
           ))}
-        </nav>
+        </div>
         <div className="flex items-center gap-3 border-t border-border p-4">
           <div className="grid h-8 w-8 place-items-center rounded-pill bg-panel-2 text-sm font-semibold">DE</div>
           <div><b className="block">Demo Engineer</b><small className="text-xs text-subtle">Facility Engineer</small></div>
         </div>
-      </aside>
+      </nav>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex h-header items-center gap-4 border-b border-border bg-bg px-6">
           <div className="text-muted">EnCo-XP / <b className="text-text">{title}</b></div>

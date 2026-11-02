@@ -125,3 +125,23 @@ test('Asset Health row opens detail; kW/RT with unit and quality_flag', async ({
   await expect(kpi).toContainText('GOOD');
   await page.screenshot({ path: `${SHOTS}/asset-detail.png` });
 });
+
+test('Findings rows keyboard reachable via title link', async ({ page }) => {
+  await open(page, '/findings');
+  const link = page.getByRole('link', { name: 'Low CHW ΔT' });
+  for (let i = 0; i < 40 && !(await link.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press('Tab');
+  await expect(link).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/findings\/F-0009$/);
+});
+
+test('Heading order and landmarks', async ({ page }) => {
+  for (const p of ['/', '/energy', '/verification', '/mv']) {
+    await open(page, p);
+    const levels = await page.locator('h1,h2,h3,h4').evaluateAll((els) => els.map((e) => +e.tagName[1]));
+    expect(levels[0]).toBe(1);
+    levels.forEach((l, i) => i && expect(l - levels[i - 1]).toBeLessThanOrEqual(1));
+    await expect(page.getByRole('main')).toHaveCount(1);
+    await expect(page.getByRole('navigation', { name: 'Main' })).toBeVisible();
+  }
+});

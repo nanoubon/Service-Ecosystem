@@ -25,7 +25,7 @@ export const handlers = [
       kw_per_rt: 0.68, kw_per_rt_baseline: 0.72, plant_load_rt: 1380, energy_today_kwh: 18420,
       pending_findings: findings.filter((f) => f.status === 'PENDING').length,
       verified_savings_amount_thb_mtd: savings.filter((x) => x.mv_status === 'VERIFIED').reduce((s, x) => s + x.savings_amount_thb, 0),
-      trend: { labels: Array.from({ length: 84 }, (_, i) => `${i}`), actual: series(84, 0.68, 0.05, 7), baseline: series(84, 0.72, 0.02, 11) },
+      trend: { labels: Array.from({ length: 84 }, (_, i) => new Date(Date.parse('2026-10-26T14:00:00+07:00') + i * 2 * 3600_000).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })), actual: series(84, 0.68, 0.05, 7), baseline: series(84, 0.72, 0.02, 11) },
     });
   }),
   http.get('/api/assets', async () => { await delay(150); return HttpResponse.json(assets); }),

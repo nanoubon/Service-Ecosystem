@@ -44,7 +44,7 @@ export function Card({ title, subtitle, children, right }: { title?: string; sub
   );
 }
 
-export interface Column<T> { key: string; header: string; render: (row: T) => ReactNode }
+export interface Column<T> { key: string; header: ReactNode; render: (row: T) => ReactNode }
 export function DataTable<T>({ rows, columns, rowKey, onRowClick, empty = 'ไม่มีข้อมูล' }: { rows: T[]; columns: Column<T>[]; rowKey: (r: T) => string; onRowClick?: (r: T) => void; empty?: string }) {
   if (!rows.length) return <EmptyState message={empty} />;
   return (
