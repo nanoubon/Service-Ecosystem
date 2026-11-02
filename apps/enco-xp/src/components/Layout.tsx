@@ -50,10 +50,12 @@ export function Layout() {
           <input aria-label="search" placeholder="ค้นหา Asset ID, Finding…" className="input ml-auto w-72" />
           <button aria-label="notifications" className="btn relative">🔔{pending > 0 && <span className="absolute right-1 top-1 h-2 w-2 rounded-pill bg-crit" />}</button>
         </header>
-        <div role="note" className="border-b border-border bg-pill-warn-bg px-6 py-1 text-sm text-pill-warn-fg">
-          DEMO DATA · ข้อมูลจำลองสำหรับ Pilot เท่านั้น (Read-only / Advisory · ไม่มีการสั่งงาน BMS)
-        </div>
-        <main className="w-full max-w-[1440px] p-6"><Outlet /></main>
+        <main>
+          <div role="note" className="border-b border-border bg-pill-warn-bg px-6 py-1 text-sm text-pill-warn-fg">
+            DEMO DATA · ข้อมูลจำลองสำหรับ Pilot เท่านั้น (Read-only / Advisory · ไม่มีการสั่งงาน BMS)
+          </div>
+          <div className="w-full max-w-[1440px] p-6"><Outlet /></div>
+        </main>
       </div>
     </div>
   );
